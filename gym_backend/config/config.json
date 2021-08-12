@@ -1,5 +1,9 @@
 {
-    "loginURL":"https://script.google.com/macros/s/AKfycbxmU0uMWqWTDfk48RCZDwBr84YNdojLCh4b21Ztl4smkzIX-EXek9m1y9dYRd_PyPlxuw/exec",
+    "loginURL":"https://script.google.com/macros/s/AKfycbwmwKIttpLSI4kqQ0aTXIp83nrXnz9xTene5e7MrWAbOiZlSHvmZj2fjzPTzer1tA5m6A/exec",
     "branchRegistraion":"https://script.google.com/macros/s/AKfycbxkw3LUef1z93IRyEOWwag7QfpgwImLHzi0Uz-ncVbUFA4YxDceqKXoQQBswym4MVH_Vw/exec",
-    "userDetails":"https://script.google.com/macros/s/AKfycbzyriEBwg-CIPlCDYbuQN-dPbUNpy8Gt8iTtdIZGwEdErcWT1ggcZlZL4_iCGhRHNM/exec"    
+    "branchDetails":"https://script.google.com/macros/s/AKfycbxDqC10G2_e30MlxRKp3jiEB_xTb9wVgufjp75X_rOFLOVzELPkSpCHvQFvVsxZjKim/exec",
+    "userRegistraion":"https://script.google.com/macros/s/AKfycbw7Nt5qX8pqKmOTlwBL5wIVABZSwlDFX8aaM5uluo_0pqw9yjpHodX_wBeuQXvI5HbE/exec",
+    "userDetails":"https://script.google.com/macros/s/AKfycbyYzWfQBWQ_ouq73JZ0PTSUSd96lcW6ui50llSxrMvhNnqIAROE1U7C6mZvKI4luYnm/exec",
+    "userEdit":"https://script.google.com/macros/s/AKfycbxIA7xDdbc2kliYO0skTe-ENqS2O8azfvHjOP4a6XJH_rzsu0rbZeMqVrL4B3dTnEVO/exec" 
+
 }

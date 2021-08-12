@@ -2,7 +2,7 @@ import React from "react";
 import ReactFormValidation from "react-form-input-validation";
 import { Form } from 'react-bootstrap';
 import axios from 'axios';
-//import config from "../config.json";
+import config from "../config.json";
 //import http from "../services/auth"
 class Adduser extends React.Component {
   
@@ -19,11 +19,11 @@ class Adduser extends React.Component {
       optionRadio:["3 Months","6 Months", "1 Year"],
       fields: {
         joiningDate: formatedDate,
-       branchCode:"",
+       branchCode:this.props.match.params.branch,
        userName:"",
        mobileNumber:"",
        amount:"",
-      subscription:"1 Month"
+      subscription:""
       },
       errors: {}
     };
@@ -33,9 +33,9 @@ class Adduser extends React.Component {
       branchCode:"required",
      userName:"required",
      branchAddress:"required",
-     subscription:"required",
      mobileNumber: "required|numeric|digits:10",
-     amount:"required|numeric|"
+     amount:"required|numeric",
+     subscription:""
      });
 
     this.form.onformsubmit = (fields) => {
@@ -44,7 +44,7 @@ class Adduser extends React.Component {
     }
   }
   async postData(fields){
-    //const url= config.absentApi;
+    const url= config.registerNewUser;
      let obj = {
         joiningDate:fields.joiningDate,
         branchCode:fields.branchCode,
@@ -54,17 +54,15 @@ class Adduser extends React.Component {
        amount:fields.amount
          };
 console.log(obj);
-    // await axios.post(url, obj).then(
-    //   (response) => {
-    //     console.log(response);
-    //     alert("Abset form respone succesfully");
-    //   //  var query=localStorage.getItem("query");
-    //     this.props.history.push("/dashboard/"+fields.cl_code+"/"+fields.rm_code);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    await axios.post(url, obj).then(
+      (response) => {
+        console.log(response);
+        this.props.history.push("/branch/home/"+this.props.match.params.branch);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
     render() { 
         return (
@@ -154,11 +152,7 @@ console.log(obj);
                           onChange={this.form.handleChangeEvent} value={data}  id={data}
                           label={data} custom />))} 
                       
-                       <div className="alert-danger text-dange">
-                          {this.state.errors.subscription
-                        ? this.state.errors.subscription
-                         : ""}
-                       </div>
+                    
                   </Form.Group>
                   <Form.Group>
                   <Form.Label> Amount <i className="text-danger">*</i> </Form.Label>
@@ -167,7 +161,7 @@ console.log(obj);
                   name="amount"
                   onBlur={this.form.handleBlurEvent}
                   onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.mobileNumber}
+                  value={this.state.fields.amount}
                   // To override the attribute name
                   data-attribute-name="" />
                   <div className="alert-danger text-danger">

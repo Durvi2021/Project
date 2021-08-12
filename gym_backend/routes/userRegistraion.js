@@ -6,6 +6,7 @@ const config = require('../config/config.json')
 var uniqid = require('uniqid');
 const schedule = require('node-schedule');
 router.post('/registerNewUser', async (req, res) => {
+  console.log(req.body);
   let paidDate = ""
   if (req.body.subscription == "") {
     paidDate = getNotifiedDate(req.body.joiningDate, 'None')
@@ -17,25 +18,29 @@ router.post('/registerNewUser', async (req, res) => {
     paidDate = getNotifiedDate(req.body.joiningDate, '12 Months')
   }
   console.log("3", paidDate)
+  let id = Math.random().toString(36).substr(2, 4);
+  console.log(id);
   let user = {
-    sNo: uniqid(),
+    sNo: id,
     userName: req.body.userName,
-    number: req.body.number,
-    joiningDate: req.body.joiningDate,
-    paidDate: paidDate,
+    mobileNumber: req.body.mobileNumber,
+    joiningDate: JSON.stringify(req.body.joiningDate),
+    paidDate: JSON.stringify(paidDate),
     dueDate: getNotifiedDate(paidDate, ""),
-    status: req.body.status,
+    status: "Active",
     branchCode: req.body.branchCode,
     subscription: req.body.subscription,
     amount: req.body.amount,
   }
+  console.log(user,config.userRegistraion)
   const userData = await axios
-    .post(config.userRegistarion, user)
+    .post(config.userRegistraion, user)
     .then(response => {
-      console.log(response.data)
+      console.log("datareppose",response.data,"lklk");
+      res.send("Success");
     })
     .catch(error => {
-      console.log('Error - getMe:', error)
+      console.log('Error - getMe1:', error)
     });
 });
 router.get('/checkDate', async (req, res) => {
@@ -55,10 +60,10 @@ router.get('/checkDate', async (req, res) => {
 const morningReminder = schedule.scheduleJob({ hour: 10, minute: 30 }, async () => {
   const todayDate = new Date();
   console.log(todayDate)
-  var startDay = todayDate.getDate();
-  var month = todayDate.getMonth();
+  var startDay =  ("0"+ todayDate.getDate()).slice(-2);
+  var month =("0"+ (todayDate.getMonth()+1)).slice(-2);
   var year = todayDate.getFullYear();
-  var alertDate = startDay + '/' + month + '/' + year;
+  var alertDate = year+"-"+month+"-"+startDay;
   const userData = await axios
     .get(config.userDetails)
     .then(response => {
@@ -102,11 +107,12 @@ function getNotifiedDate(date, subscription) {
   }
   var someDate = new Date(`${date}`);
   someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
-  var dd = someDate.getDate();
-  var mm = someDate.getMonth() + 1;
-  var y = someDate.getFullYear();
-
-  return someFormattedDate = dd + '/' + mm + '/' + y;
+ 
+ 
+   var mm = ("0"+ (someDate.getMonth()+1)).slice(-2);
+   var dd = ("0"+ someDate.getDate()).slice(-2);
+  var y=someDate.getFullYear();
+  return someFormattedDate = y+"-"+mm+"-"+dd;
 }
 
 module.exports = router;

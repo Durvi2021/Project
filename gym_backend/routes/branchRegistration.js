@@ -7,19 +7,20 @@ router.post('/registerNewBranch', async (req, res) => {
     console.log('working',req.body);
 
     let branch  = {
-        sno:uniqid(),      
+        sno:"S"+Math.random().toString(36).substr(2, 4),      
         todayDate:req.body.todayDate,
         userName:req.body.userName,
         password: req.body.password,
         mobileNumber: req.body.mobileNumber,
-        role: req.body.role,
-        branchCode:'B'+uniqid(),
+        role: "Manager",
+        branchCode:'B'+Math.random().toString(36).substr(2, 4),     
         address: req.body.address,
     }
     const userData = await axios
     .post(config.branchRegistraion,branch)
     .then(response => {
       console.log(response.data)
+      res.send("Success");
     })
     .catch(error => {
       console.log('Error - getMe:', error)

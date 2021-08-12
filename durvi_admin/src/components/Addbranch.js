@@ -2,7 +2,7 @@ import React from "react";
 import ReactFormValidation from "react-form-input-validation";
 import { Form } from 'react-bootstrap';
 import axios from 'axios';
-//import config from "../config.json";
+import config from "../config.json";
 //import http from "../services/auth"
 class Addbranch extends React.Component {
   
@@ -20,17 +20,19 @@ class Addbranch extends React.Component {
        branchCode:"",
        userName:"",
        mobileNumber:"",
-       branchAddress:""
+       branchAddress:"",
+       password:""
       },
       errors: {}
     };
     this.form = new ReactFormValidation(this, { locale: "en" });
     this.form.useRules({
      joiningDate:"required",
-      branchCode:"required",
+    
      userName:"required",
      branchAddress:"required",
      mobileNumber: "required|numeric|digits:10",
+     password:"required"
      });
 
     this.form.onformsubmit = (fields) => {
@@ -39,26 +41,25 @@ class Addbranch extends React.Component {
     }
   }
   async postData(fields){
-    //const url= config.absentApi;
+    const url= config.registerNewBranch;
      let obj = {
-        joiningDate:fields.joiningDate,
-        branchCode:fields.branchCode,
+      todayDate:fields.joiningDate,
+     
        userName:fields.userName,
-       branchAddress:fields.branchAddress,
+      address:fields.branchAddress,
        mobileNumber: fields.mobileNumber,
+       password:fields.password
          };
 console.log(obj);
-    // await axios.post(url, obj).then(
-    //   (response) => {
-    //     console.log(response);
-    //     alert("Abset form respone succesfully");
-    //   //  var query=localStorage.getItem("query");
-    //     this.props.history.push("/dashboard/"+fields.cl_code+"/"+fields.rm_code);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    await axios.post(url, obj).then(
+      (response) => {
+        console.log("resp",response);
+        this.props.history.push("/admin/home");
+      },
+      (error) => {
+        console.log("eerr",error);
+      }
+    );
   }
     render() { 
         return (
@@ -90,7 +91,7 @@ console.log(obj);
                   : ""}
                   </div>
                   </Form.Group>
-                  <Form.Group>
+                  {/* <Form.Group>
                   <Form.Label> Branch Code <i className="text-danger">*</i> </Form.Label>
                  <Form.Control
                   type="text"
@@ -106,7 +107,7 @@ console.log(obj);
                   ? this.state.errors.branchCode
                   : ""}
                   </div>
-                  </Form.Group>
+                  </Form.Group> */}
                   <Form.Group>
                   <Form.Label> User Name <i className="text-danger">*</i> </Form.Label>
                  <Form.Control

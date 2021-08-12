@@ -8,11 +8,14 @@ router.post('/login', async (req, res) => {
     const userData = await axios
     .get(config.loginURL)
     .then(response => {
-      let matchUser = response.data.find((user)=> user.userName == loginUserData.userName && user.password == loginUserData.password );
-      console.log(matchUser)
+      console.log(response.data)
+      let matchUser = response.data.find((user)=> user.branchCode == loginUserData.userName && user.password == loginUserData.password );
+      console.log("matchuser",matchUser)
       if(matchUser){
+        res.send(matchUser);
         console.log('Login succes')
       }else{
+        res.send("wrong credential");
         console.log('Wrong user name or password')
       }
     })

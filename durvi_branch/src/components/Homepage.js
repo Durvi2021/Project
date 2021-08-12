@@ -1,347 +1,235 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap'
+import config from "../config.json";
 import ReactFormValidation from "react-form-input-validation";
-//import config from "../config.json";
-//import http from "../services/auth"
+import '../App.css';
 class Homepage extends Component {
-  todate = new Date();
-  month = ("0" + (this.todate.getMonth() + 1)).slice(-2);
-  date = ("0" + this.todate.getDate()).slice(-2);
-  day = this.todate.getDay();
-  formatedDate = `${this.todate.getFullYear()}-${this.month}-${this.date}`;
   constructor(props) {
+    
     super(props);
-
-    this.state = {
-      userData: [232, 23, 2332, 2323, 23, 23, 2332, 323],
+   
+     this.state = {
+      showModal: false,
+      userData: [],
+      sendData:{},
+      branchCode:this.props.match.params.branch,
       weekDay: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      editModal: false,
-      paymentModal: false,
-      sendData: {},
-      fields: {
-        paymentDate: this.formatedDate,
-        amount: 0,
-        mobileNumber: "",
-        userName: "",
-      },
-      errors: {}
-    };
-    //  console.log(this.state.fields.paymentDate);
-    this.form = new ReactFormValidation(this, { locale: "en" });
-    this.form.useRules({
-      userName: "required",
-      mobileNumber: "required|numeric|digits:10",
-      paymentDate: "required",
-      amount: "required|numeric|"
-    });
+      details:this.props.location.state,
+     }
+}
 
-    this.form.onformsubmit = (fields) => {
-      //this.postData(fields);
-      console.log(fields);
-    }
-  }
-
-
+ d = new Date();
+ month = ("0"+ (this.d.getMonth()+1)).slice(-2);
+ date = ("0"+ this.d.getDate()).slice(-2);
+ day = this.d.getDay();
+ dformat = [this.day,this.month, this.d.getFullYear(), this.date];
+  
   componentDidMount() {
-
+ this.getDetails();
   }
-  async postData(fields) {
-    //const url= config.absentApi;
-    if (this.state.editModal) {
-      let obj = {
-        userName: fields.userName,
-        mobileNumber: fields.mobileNumber,
-      };
-      console.log(obj);
-      // await axios.post(url, obj).then(
-      //   (response) => {
-      //     console.log(response);
-      //     alert("Abset form respone succesfully");
-      //   //  var query=localStorage.getItem("query");
-      //     this.props.history.push("/dashboard/"+fields.cl_code+"/"+fields.rm_code);
-      //   },
-      //   (error) => {
-      //     console.log(error);
-      //   }
-      // );
+  async  getDetails(){
+    console.log(this.state.branchCode)
+    let url=config.userDetails+"?branch="+this.state.branchCode;
+    const userData = await axios
+    .get(url, { headers: { 'Authorization': this.state.token } })
+  .then(resp=>resp.data)
+  .catch(error => {
+    if(error.response.status===403){
+      alert("Your session has expired! Please Login again!")
+      this.props.history.push(`/branch`);
     }
-    if (this.state.paymentModal) {
-      let obj = {
-        paymentDate: fields.paymentDate,
-        userName: fields.userName,
-        mobileNumber: fields.mobileNumber,
-        amount: fields.amount
-      };
-      console.log(obj);
-      // await axios.post(url, obj).then(
-      //   (response) => {
-      //     console.log(response);
-      //     alert("Abset form respone succesfully");
-      //   //  var query=localStorage.getItem("query");
-      //     this.props.history.push("/dashboard/"+fields.cl_code+"/"+fields.rm_code);
-      //   },
-      //   (error) => {
-      //     console.log(error);
-      //   }
-      // );
-    }
+  });
+localStorage.setItem("branchCode",this.state.branchCode);
+  this.setState({userData:userData,sendData:userData[0]});
+  console.log(this.state.userData);
   }
 
-
-  editData(data) {
-    this.setState({ editModal: true, sendData: data });
-    console.log(this.state.editModal);
+  async postData(sendData) {
+    // let obj={
+    //   sNo:sendData.sNo,
+    //   userName:sendData.userName,
+    //   mobileNumber: sendData.number,
+    //   joiningDate:sendData.joiningDate,
+    //   paidDate:sendData.paidDate,
+    //   dueDate:sendData.dueDate,
+    //   status: sendData.status,
+    //   branchCode: sendData.branchCode,
+    //   subscription: sendData.subscription,
+    //   amount: sendData.amount,
+    // }
+    console.log();
+    // const url= config.userEdit;
+    // await axios.post(url, obj).then(
+    //     (response) => {
+    //       console.log(response);
+    //     },
+    //     (error) => {
+    //       console.log(error);
+    //     }
+    //   );
+    
   }
-  handleCloseEdit() {
-    this.setState({ editModal: false });
+  handleCloseShow() {
+    this.setState({ showModal: false });
   }
-  handleSubmitEdit() {
-
-    this.setState({ editModal: false });
+  handleSubmitShow() {
+    this.setState({ showModal: false });
   }
-  submitPayment(data) {
-    this.setState({ paymentModal: true, sendData: data });
+  
+  showData(data) {
+    this.setState({ showModal: true,sendData:data });
   }
-  handleClosePayment() {
-    this.setState({ paymentModal: false });
-  }
-  handleSubmitPayment() {
-    this.setState({ paymentModal: false });
+async  editData(data) {
+    await this.props.history.push({ 
+      pathname: '/branch/editData',
+      state: data
+     });
   }
   render() {
     return (
-      <div style={{ backgroundColor: "#F8C47180" }} className="container-fluid">
-        <div style={{ padding: 5, marginBottom: 5 }}>
-          <h5 className="text-center" style={{ fontSize: 20, fontWeight: 'bold' }}>User's Details</h5>
-          <div className="row" style={{ fontSize: 20, fontWeight: 'bold' }}>
-            <div className="col-6 text-center">{this.state.weekDay[this.day]} </div>
-            <div className="col-6 text-center">{this.formatedDate} </div>
-          </div>
-          <hr />
-          <div className="row ">
-            <div className="col-10 offset-1 bg-light ">
-              <div className="row border ">
-                <div className="col form-control">S. No.</div>
-                <div className="col form-control">User Name</div>
-                <div className="col form-control">Mobile Number</div>
-                <div className="col form-control">Joining Date</div>
-                <div className="col form-control">Paid Date</div>
-                <div className="col form-control">Amount</div>
-                <div className="col form-control">Due Date</div>
-                {/* <div className="col form-control">Payment Date</div> */}
-                <div className="col form-control">Submit Payment</div>
-                <div className="col form-control">Status</div>
-              </div>
-              {this.state.userData.map((data, index) => (
-                <div className="row border ">
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">{data}</div>
-                  <div className="col form-control">
-                    <Button className="btn btn-primary" onClick={() => this.submitPayment(data)}>Click here</Button>
-                  </div>
-                  <div className="col form-control">
-                    <Button className="btn btn-primary" onClick={() => this.editData(data)}>Edit</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      <div style={{ backgroundColor: "whitesmoke" }} className="container-fluid">
+           <div style={{ padding: 5, marginBottom: 5 }}>
+                  <h1 className="text-center letterFormate font-weight-bold">User Details</h1>
+  <div className="table-responsive-sm">
+ <table className="table">
+  <thead>
+    <tr>
+      <th scope="col">User Name</th>
+      <th scope="col">Mobile Number</th>
+      <th scope="col">Joining Date</th>
+      <th scope="col">Paid Date</th>
+      <th scope="col">Due Date</th>
+      <th scope="col">Subscription</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Status</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+   {this.state.userData.map((data, index) => (   
+    <tr>
+      <th  scope="row" className="text-primary" onClick={() => this.showData(data)}>{data.userName}</th>
+      <td>{data.mobileNumber}</td>
+      <td>{data.joiningDate}</td>
+      <td>{data.paidDate}</td>
+       <td>{data.dueDate}</td>
+      <td>{data.subscription}</td>
+       <td>{data.amount}</td>
+      <td>{data.status}</td>
+      <td>   <Button className="btn btn-primary" onClick={() => this.editData(data)}>Edit</Button></td>
+    </tr> ))}
+  </tbody>
+</table>
+   </div>            
+    </div>
+                <Modal show={this.state.showModal} onHide={() => this.handleCloseShow()} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>{this.state.sendData.userName} Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+
+            <Form className="myForm" >
+              <Form.Group>
+                <Form.Label> Branch Code <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="branchCode"
+                  disabled={true}
+                  value={this.state.sendData.branchCode}
+                  // To override the attribute name
+                  data-attribute-name="" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label> User Name <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="userName"
+                  value={this.state.sendData.userName}
+                  // To override the attribute name
+                  data-attribute-name="" />
+             
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label> Mobile Number <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="mobileNumber"
+                  value={this.state.sendData.mobileNumber}
+                  // To override the attribute name
+                  data-attribute-name="" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label> Joining Date <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="joiningDate"
+                  value={this.state.sendData.joiningDate}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label> Paid Date <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="paidDate"
+                  value={this.state.sendData.paidDate}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label> Due Date <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="dueDate"
+                  value={this.state.sendData.dueDate}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label> Status <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="status"
+                  value={this.state.sendData.status}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label> Subscription <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="subscription"
+                  value={this.state.sendData.subscription}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label> Amount <i className="text-danger">*</i> </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="amount"
+                  value={this.state.sendData.amount}
+                 
+                  data-attribute-name="" />
+              </Form.Group>
+              
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => this.handleSubmitShow()}>
+              Ok
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         </div>
-
-        <Modal show={this.state.editModal} onHide={() => this.handleCloseEdit()} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-
-            <Form className="myForm" noValidate onSubmit={this.form.handleSubmit} >
-              <Form.Group>
-                <Form.Label> Branch Code <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="branchCode"
-                  disabled={true}
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.branchCode}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.branchCode
-                    ? this.state.errors.branchCode
-                    : ""}
-                </div>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label> User Name <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="userName"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.userName}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.userName
-                    ? this.state.errors.userName
-                    : ""}
-                </div>
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label> Mobile Number <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="mobileNumber"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.mobileNumber}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.mobileNumber
-                    ? this.state.errors.mobileNumber
-                    : ""}
-                </div>
-              </Form.Group>
-
-
-              <Form.Group>
-                <Form.Label> Amount <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="amount"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.mobileNumber}
-                  disabled={true}
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.amount
-                    ? this.state.errors.amount
-                    : ""}
-                </div>
-              </Form.Group>
-              <button type="submit" className="btn btn-primary mt-3">Submit</button>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => this.handleSubmitEdit()}>
-              Ok
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-
-        <Modal show={this.state.paymentModal} onHide={() => this.handleClosePayment()} size="lg">
-          <Modal.Header closeButton>
-            <Modal.Title>Submit Payment</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form className="myForm" noValidate onSubmit={this.form.handleSubmit} >
-              <Form.Group>
-                <Form.Label> Date <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="date"
-                  name="paymentDate"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.paymentDate}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.paymentDate
-                    ? this.state.errors.paymentDate
-                    : ""}
-                </div>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label> Branch Code <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="branchCode"
-                  disabled={true}
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.branchCode}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.branchCode
-                    ? this.state.errors.branchCode
-                    : ""}
-                </div>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label> User Name <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="userName"
-                  disabled={true}
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.userName}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.userName
-                    ? this.state.errors.userName
-                    : ""}
-                </div>
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label> Mobile Number <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="mobileNumber"
-                  disabled={true}
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.mobileNumber}
-                  // To override the attribute name
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.mobileNumber
-                    ? this.state.errors.mobileNumber
-                    : ""}
-                </div>
-              </Form.Group>
-
-
-              <Form.Group>
-                <Form.Label> Amount <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="amount"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.mobileNumber}
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.amount
-                    ? this.state.errors.amount
-                    : ""}
-                </div>
-              </Form.Group>
-              <button type="submit" className="btn btn-primary mt-3">Submit</button>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => this.handleSubmitPayment()}>
-              Ok
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
-
+      
     );
   }
 }

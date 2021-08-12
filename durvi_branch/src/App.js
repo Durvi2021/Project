@@ -4,12 +4,18 @@ import './App.css';
 import { Component } from 'react';
 
 class  App extends Component  {
+  state={};
+  componentDidMount(){
+   let login=localStorage.getItem("branch");
+   this.setState({login});
+  }
  render(){
+  console.log(this.state.login);
+ 
   return (
     <div>
-      <AppNavbar />
-      
-    </div>
+      <AppNavbar login={this.state.login} />
+     </div>
   
     );
  }
