@@ -9,7 +9,7 @@ class EditUserData extends Component {
     super(props);
 
    let  details=this.props.location.state;
-   console.log(typeof(details.mobileNumber));
+   console.log(details)
      this.state = {
      option:["Active","Inactive"],
     fields: {
@@ -45,6 +45,7 @@ console.log(this.state.sendData);
 
  
   async postData(fields) {
+    console.log(fields)
     const url= config.userEdit;
     await axios.put(url, fields).then(
         (response) => {

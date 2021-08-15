@@ -1,49 +1,61 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap'
+import Loading from '../Loading/loadingRound'
 import config from "../config.json";
 import ReactFormValidation from "react-form-input-validation";
 import '../App.css';
 class Homepage extends Component {
   constructor(props) {
-    
+
     super(props);
-   
-     this.state = {
+
+    this.state = {
       showModal: false,
       userData: [],
-      sendData:{},
-      branchCode:this.props.match.params.branch,
+      sendData: {},
+      branchCode: this.props.match.params.branch,
       weekDay: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      details:this.props.location.state,
-     }
-}
-
- d = new Date();
- month = ("0"+ (this.d.getMonth()+1)).slice(-2);
- date = ("0"+ this.d.getDate()).slice(-2);
- day = this.d.getDay();
- dformat = [this.day,this.month, this.d.getFullYear(), this.date];
-  
-  componentDidMount() {
- this.getDetails();
-  }
-  async  getDetails(){
-    console.log(this.state.branchCode)
-    let url=config.userDetails+"?branch="+this.state.branchCode;
-    const userData = await axios
-    .get(url, { headers: { 'Authorization': this.state.token } })
-  .then(resp=>resp.data)
-  .catch(error => {
-    if(error.response.status===403){
-      alert("Your session has expired! Please Login again!")
-      this.props.history.push(`/branch`);
+      details: this.props.location.state,
     }
-  });
-localStorage.setItem("branchCode",this.state.branchCode);
-  this.setState({userData:userData,sendData:userData[0]});
-  console.log(this.state.userData);
   }
+
+  d = new Date();
+  month = ("0" + (this.d.getMonth() + 1)).slice(-2);
+  date = ("0" + this.d.getDate()).slice(-2);
+  day = this.d.getDay();
+  dformat = [this.day, this.month, this.d.getFullYear(), this.date];
+
+  componentDidMount() {
+    this.getDetails();
+  }
+  async getDetails() {
+    console.log(this.state.branchCode)
+    let url = config.userDetails + "?branch=" + this.state.branchCode;
+    const userData = await axios
+      .get(url, { headers: { 'Authorization': this.state.token } })
+      .then(resp => resp.data)
+      .catch(error => {
+        if (error.response.status === 403) {
+          alert("Your session has expired! Please Login again!")
+          this.props.history.push(`/branch`);
+        }
+      });
+      console.log(userData);
+      this.setState({userData:userData})
+
+    localStorage.setItem("branchCode", this.state.branchCode);
+    // this.setState({ userData: userData, sendData: userData[0] });
+
+    console.log(this.state.userData);
+  }
+  handleRmCode = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      RMcode: e.target.value
+    })
+  }
+
 
   async postData(sendData) {
     // let obj={
@@ -68,7 +80,7 @@ localStorage.setItem("branchCode",this.state.branchCode);
     //       console.log(error);
     //     }
     //   );
-    
+
   }
   handleCloseShow() {
     this.setState({ showModal: false });
@@ -76,54 +88,79 @@ localStorage.setItem("branchCode",this.state.branchCode);
   handleSubmitShow() {
     this.setState({ showModal: false });
   }
-  
+
   showData(data) {
-    this.setState({ showModal: true,sendData:data });
+    this.setState({ showModal: true, sendData: data });
   }
-async  editData(data) {
-    await this.props.history.push({ 
+  async Filteration(data) {
+    await this.props.history.push({
       pathname: '/branch/editData',
       state: data
-     });
+    });
   }
   render() {
     return (
-      <div style={{ backgroundColor: "whitesmoke" }} className="container-fluid">
-           <div style={{ padding: 5, marginBottom: 5 }}>
-                  <h1 className="text-center letterFormate font-weight-bold">User Details</h1>
-  <div className="table-responsive-sm">
- <table className="table">
-  <thead>
-    <tr>
-      <th scope="col">User Name</th>
-      <th scope="col">Mobile Number</th>
-      <th scope="col">Joining Date</th>
-      <th scope="col">Paid Date</th>
-      <th scope="col">Due Date</th>
-      <th scope="col">Subscription</th>
-      <th scope="col">Amount</th>
-      <th scope="col">Status</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-   {this.state.userData.map((data, index) => (   
-    <tr>
-      <th  scope="row" className="text-primary" onClick={() => this.showData(data)}>{data.userName}</th>
-      <td>{data.mobileNumber}</td>
-      <td>{data.joiningDate}</td>
-      <td>{data.paidDate}</td>
-       <td>{data.dueDate}</td>
-      <td>{data.subscription}</td>
-       <td>{data.amount}</td>
-      <td>{data.status}</td>
-      <td>   <Button className="btn btn-primary" onClick={() => this.editData(data)}>Edit</Button></td>
-    </tr> ))}
-  </tbody>
-</table>
-   </div>            
-    </div>
-                <Modal show={this.state.showModal} onHide={() => this.handleCloseShow()} size="lg">
+      <React.Fragment>
+        {this.state.isLoading ? (
+          <Loading></Loading>
+        ) : (
+<div style={{ backgroundColor: "whitesmoke" }} className="container-fluid">
+        <div style={{ padding: 5, marginBottom: 5 }}>
+          <h1 className="text-center letterFormate font-weight-bold">User Details</h1>
+          <div className="d-flex justify-content-center px-5">
+            <div className="search">
+              <input type="text" className="search-input" placeholder="Search..." name="" />
+              <a href="#" className="search-icon">
+                <i className="fa fa-search"></i>
+              </a>
+            </div>
+
+
+          </div>
+          <span>
+            <select className="form-select" aria-label="Default select example"
+             onChange={this.Filteration()}>
+              <option >Filter user</option>
+              <option value="1">Three day due date</option>
+              <option value="2">Two day due date</option>
+              <option value="3">Ond day due date</option>
+            </select>
+          </span>
+
+          <div className="table-responsive-sm">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">User Name</th>
+                  <th scope="col">Mobile Number</th>
+                  <th scope="col">Joining Date</th>
+                  <th scope="col">Paid Date</th>
+                  <th scope="col">Due Date</th>
+                  <th scope="col">Subscription</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.userData &&
+                this.state.userData.map((data, index) => (
+                  <tr>
+                    <th scope="row" className="text-primary" onClick={() => this.showData(data)}>{data.userName}</th>
+                    <td>{data.mobileNumber}</td>
+                    <td>{data.joiningDate}</td>
+                    <td>{data.paidDate}</td>
+                    <td>{data.dueDate}</td>
+                    <td>{data.subscription}</td>
+                    <td>{data.amount}</td>
+                    <td>{data.status}</td>
+                    <td>   <Button className="btn btn-primary" onClick={() => this.editData(data)}>Edit</Button></td>
+                  </tr>))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <Modal show={this.state.showModal} onHide={() => this.handleCloseShow()} size="lg">
           <Modal.Header closeButton>
             <Modal.Title>{this.state.sendData.userName} Details</Modal.Title>
           </Modal.Header>
@@ -148,7 +185,7 @@ async  editData(data) {
                   value={this.state.sendData.userName}
                   // To override the attribute name
                   data-attribute-name="" />
-             
+
               </Form.Group>
 
               <Form.Group>
@@ -167,7 +204,7 @@ async  editData(data) {
                   type="text"
                   name="joiningDate"
                   value={this.state.sendData.joiningDate}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
 
@@ -177,7 +214,7 @@ async  editData(data) {
                   type="text"
                   name="paidDate"
                   value={this.state.sendData.paidDate}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
 
@@ -187,7 +224,7 @@ async  editData(data) {
                   type="text"
                   name="dueDate"
                   value={this.state.sendData.dueDate}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
 
@@ -197,7 +234,7 @@ async  editData(data) {
                   type="text"
                   name="status"
                   value={this.state.sendData.status}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
               <Form.Group>
@@ -206,7 +243,7 @@ async  editData(data) {
                   type="text"
                   name="subscription"
                   value={this.state.sendData.subscription}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
               <Form.Group>
@@ -215,10 +252,10 @@ async  editData(data) {
                   type="text"
                   name="amount"
                   value={this.state.sendData.amount}
-                 
+
                   data-attribute-name="" />
               </Form.Group>
-              
+
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -227,9 +264,11 @@ async  editData(data) {
             </Button>
           </Modal.Footer>
         </Modal>
-
-        </div>
+          </div>
+        )}
+      </React.Fragment>
       
+
     );
   }
 }
