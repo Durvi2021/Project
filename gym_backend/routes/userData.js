@@ -7,7 +7,7 @@ router.get('/userDetails', async (req, res) => {
     const userData = await axios
     .get(config.userDetails)
     .then(response => {
-        console.log(response.data);
+        //console.log(response.data);
         let data=response.data.filter(obj=>obj.branchCode==branchCode);
       
       //   data.map(obj=>{
@@ -18,20 +18,20 @@ router.get('/userDetails', async (req, res) => {
       //   let due =obj.dueDate.split("T");
       //   obj.dueDate.setDate(due[0].getDate() + 1);
       // })
-     // console.log(results[0], results.length);
+     // //console.log(results[0], results.length);
     //  var result=results.filter(obj=>{
     //    const x2 = JSON.stringify(obj.Date);
     //        const z2=x2.slice(1,x2.length-1);
     //        const y2=z2.split("T");
     //          const resultDate=y2[0];
-    //  //	console.log(resultDate, yesDate);
+    //  //	//console.log(resultDate, yesDate);
     //    if(resultDate===yesDate) return obj;
     //  });
 
         res.send(data);
     })
     .catch(error => {
-      console.log('Error - getMe:', error)
+      //console.log('Error - getMe:', error)
     });
  
 });

@@ -23,7 +23,7 @@ class Adduser extends React.Component {
        userName:"",
        mobileNumber:"",
        amount:"",
-      subscription:""
+      subscription:"undefiend"
       },
       errors: {}
     };
@@ -35,7 +35,7 @@ class Adduser extends React.Component {
      branchAddress:"required",
      mobileNumber: "required|numeric|digits:10",
      amount:"required|numeric",
-     subscription:""
+     subscription:"required"
      });
 
     this.form.onformsubmit = (fields) => {
@@ -63,6 +63,9 @@ console.log(obj);
         console.log(error);
       }
     );
+  }
+  handleRadio(e){
+    console.log(e, this);
   }
     render() { 
         return (
@@ -151,8 +154,6 @@ console.log(obj);
                           name="subscription"
                           onChange={this.form.handleChangeEvent} value={data}  id={data}
                           label={data} custom />))} 
-                      
-                    
                   </Form.Group>
                   <Form.Group>
                   <Form.Label> Amount <i className="text-danger">*</i> </Form.Label>

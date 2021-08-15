@@ -6,7 +6,7 @@ const config = require('../config/config.json')
 var uniqid = require('uniqid');
 const schedule = require('node-schedule');
 router.put('/editRegisteredUser', async (req, res) => {   
-  console.log("data",req.body);
+  //console.log("data",req.body);
     let user  = {
       sNo:req.body.sNo,
         userName:req.body.userName,
@@ -22,11 +22,11 @@ router.put('/editRegisteredUser', async (req, res) => {
     await axios
     .post(config.userEdit,user)
     .then(response => {
-      // console.log(response.data)
+      // //console.log(response.data)
       res.send("Success");
     })
     .catch(error => {
-      console.log('Error - getMe:', error)
+      //console.log('Error - getMe:', error)
     });
 });
 

@@ -7,10 +7,11 @@ class EditUserData extends Component {
   constructor(props) {
     
     super(props);
+
    let  details=this.props.location.state;
    console.log(typeof(details.mobileNumber));
      this.state = {
-     
+     option:["Active","Inactive"],
     fields: {
       sNo:details.sNo,
       userName:details.userName,
@@ -29,7 +30,7 @@ console.log(this.state.sendData);
   this.form = new ReactFormValidation(this, { locale: "en" });
   this.form.useRules({
     userName: "required",
-    mobileNumber: "numeric|digits:10",
+    mobileNumber: "required|numeric|digits:10",
     branchCode: "required",
     amount: "required|numeric",
     paidDate:"required",
@@ -44,23 +45,11 @@ console.log(this.state.sendData);
 
  
   async postData(fields) {
-    // let obj={
-    //   sNo:fields.sNo,
-    //   userName:fields.userName,
-    //   mobileNumber: fields.number,
-    //   joiningDate:fields.joiningDate,
-    //   paidDate:fields.paidDate,
-    //   dueDate:fields.dueDate,
-    //   status: fields.status,
-    //   branchCode: fields.branchCode,
-    //   subscription: fields.subscription,
-    //   amount: fields.amount,
-    // }
-    console.log();
     const url= config.userEdit;
-    await axios.post(url, fields).then(
+    await axios.put(url, fields).then(
         (response) => {
           console.log(response);
+          this.props.history.push("/admin/home");
         },
         (error) => {
           console.log(error);
@@ -113,19 +102,20 @@ console.log(this.state.sendData);
               <Form.Group>
                 <Form.Label> Mobile Number <i className="text-danger">*</i> </Form.Label>
                 <Form.Control
-                  type="number"
-                  name="mobileNumber"
+                  type="text"
+                  name="moblieNumber"
                   onBlur={this.form.handleBlurEvent}
                   onChange={this.form.handleChangeEvent}
                   value={this.state.fields.mobileNumber}
-                  // To override the attribute name
+                 
                   data-attribute-name="" />
                 <div className="alert-danger text-danger">
-                  {this.state.errors.mobileNumber
-                    ? this.state.errors.mobileNumber
+                  {this.state.errors.moblieNumber
+                    ? this.state.errors.moblieNumber
                     : ""}
                 </div>
               </Form.Group>
+              
 
               <Form.Group>
                 <Form.Label> Paid Date <i className="text-danger">*</i> </Form.Label>
@@ -145,20 +135,20 @@ console.log(this.state.sendData);
               </Form.Group>
 
               <Form.Group>
-                <Form.Label> Status <i className="text-danger">*</i> </Form.Label>
-                <Form.Control
-                  type="text"
-                  name="status"
-                  onBlur={this.form.handleBlurEvent}
-                  onChange={this.form.handleChangeEvent}
-                  value={this.state.fields.status}
-                 
-                  data-attribute-name="" />
-                <div className="alert-danger text-danger">
-                  {this.state.errors.status
-                    ? this.state.errors.status
-                    : ""}
-                </div>
+                <Form.Label>Select Status <i className="text-danger">*</i> </Form.Label>
+                <Form.Control as="select" name="status" 
+                          value={this.state.fields.status}
+                           onChange={this.form.handleChangeEvent}
+                           onBlur={this.form.handleBlurEvent}
+                           data-attribute-name="" custom  className="form-control">
+                           <option value="Choose">Choose ...</option>
+                           { this.state.option.map((data,index)=>(<option value={data} key={index}>{data}</option>))} 
+                       </Form.Control>
+                       <div className="alert-danger text-danger">
+                          {this.state.errors.status
+                        ? this.state.errors.status
+                         : ""}
+                       </div>
               </Form.Group>
               
               <Form.Group>

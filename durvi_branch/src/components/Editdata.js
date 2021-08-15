@@ -30,7 +30,7 @@ console.log(this.state.sendData);
   this.form = new ReactFormValidation(this, { locale: "en" });
   this.form.useRules({
     userName: "required",
-    mobileNumber: "numeric|digits:10",
+    mobileNumber: "required|numeric|digits:10",
     branchCode: "required",
     amount: "required|numeric",
     paidDate:"required",
@@ -102,19 +102,20 @@ console.log(this.state.sendData);
               <Form.Group>
                 <Form.Label> Mobile Number <i className="text-danger">*</i> </Form.Label>
                 <Form.Control
-                  type="number"
-                  name="mobileNumber"
+                  type="text"
+                  name="moblieNumber"
                   onBlur={this.form.handleBlurEvent}
                   onChange={this.form.handleChangeEvent}
                   value={this.state.fields.mobileNumber}
-                  // To override the attribute name
+                 
                   data-attribute-name="" />
                 <div className="alert-danger text-danger">
-                  {this.state.errors.mobileNumber
-                    ? this.state.errors.mobileNumber
+                  {this.state.errors.moblieNumber
+                    ? this.state.errors.moblieNumber
                     : ""}
                 </div>
               </Form.Group>
+              
 
               <Form.Group>
                 <Form.Label> Paid Date <i className="text-danger">*</i> </Form.Label>

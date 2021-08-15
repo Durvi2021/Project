@@ -4,7 +4,7 @@ const router = express.Router();
 var uniqid = require('uniqid');
 const config = require('../config/config.json')
 router.post('/registerNewBranch', async (req, res) => { 
-    console.log('working',req.body);
+    //console.log('working',req.body);
 
     let branch  = {
         sno:"S"+Math.random().toString(36).substr(2, 4),      
@@ -19,11 +19,11 @@ router.post('/registerNewBranch', async (req, res) => {
     const userData = await axios
     .post(config.branchRegistraion,branch)
     .then(response => {
-      console.log(response.data)
+      //console.log(response.data)
       res.send("Success");
     })
     .catch(error => {
-      console.log('Error - getMe:', error)
+      //console.log('Error - getMe:', error)
     });
 });
 module.exports = router;
